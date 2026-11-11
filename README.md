@@ -89,11 +89,18 @@ veröffentlichen und den Zweck genau verfehlen. Das unberührte Bild liegt in
 lässt sich also korrigieren und erneut anwenden, ohne dass sich Balken
 stapeln.
 
-**Stand:** die elf Boxen in `masks.json` sind gesetzt, aber noch nicht fertig
-geprüft. Zuletzt gesehen: auf 04, 09, 10 und 15 steht das Schild noch neben
-dem Balken, auf 03, 06 und 11 liegt der Balken neben dem Fahrzeug. Ohne
-Entsprechung in `masks.json` sind 02, 05, 12, 13 und 16 — dort ist kein
-Kennzeichen im Bild. Diese Annahme nach dem Fotowechsel neu prüfen.
+**Stand:**
+
+- **Fertig, von Hand ausserhalb dieses Werkzeugs maskiert:** 01, 03, 04, 05,
+  06, 08, 10. Diese haben *keinen* Eintrag in `masks.json` mehr — ein neuer
+  Eintrag würde einen zweiten Balken auf ein bereits maskiertes Bild malen.
+- **Noch offen, Boxen sitzen noch nicht:** 07, 09, 11, 14, 15. Darunter 09
+  mit dem am besten lesbaren Schild des Satzes.
+- **Kein Kennzeichen im Bild:** 02, 12, 13, 16. Nach dem Fotowechsel neu
+  prüfen.
+
+Solange die fünf offenen nicht maskiert sind, darf `photos/` **nicht**
+committet werden.
 
 ---
 
