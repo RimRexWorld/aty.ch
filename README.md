@@ -65,6 +65,36 @@ erzeugt alle Grössen selbst und kann nur verkleinern.
 > (1600 px). Auf mehreren ist das **Kennzeichen lesbar** — vor dem ersten Push
 > maskieren oder durch maskierte Originale ersetzen.
 
+### Kennzeichen maskieren
+
+```bash
+nix develop -c node tools/mask.mjs --check     # ganzes Bild, 5%-Raster, Box rot
+nix develop -c node tools/mask.mjs --preview   # Zoom auf jede Box
+nix develop -c node tools/mask.mjs --apply     # weisse Balken reinschreiben
+```
+
+Boxen stehen in `content/masks.json` als `[x, y, breite, höhe]`, **Anteile von
+0 bis 1**, Ursprung oben links. Anteile statt Pixel, damit ein höher
+aufgelöstes Original derselben Aufnahme dieselben Zahlen behält.
+
+Der Ablauf ist `--check`, Zahlen korrigieren, wiederholen, bis jeder Balken
+sein Schild vollständig deckt — dann `--apply`. Die `--check`-Ansicht legt das
+5 %-Raster in absoluten Bildanteilen über das ganze Foto, die Zahlen lassen
+sich also direkt ablesen und zurückschreiben.
+
+Maskiert wird **destruktiv**, weil `photos/` in ein öffentliches Repo geht.
+Eine Maskierung erst beim Build würde das unmaskierte Original in Git
+veröffentlichen und den Zweck genau verfehlen. Das unberührte Bild liegt in
+`.originals/` (gitignored), und jeder Lauf rechnet von dort neu — eine Box
+lässt sich also korrigieren und erneut anwenden, ohne dass sich Balken
+stapeln.
+
+**Stand:** die elf Boxen in `masks.json` sind gesetzt, aber noch nicht fertig
+geprüft. Zuletzt gesehen: auf 04, 09, 10 und 15 steht das Schild noch neben
+dem Balken, auf 03, 06 und 11 liegt der Balken neben dem Fahrzeug. Ohne
+Entsprechung in `masks.json` sind 02, 05, 12, 13 und 16 — dort ist kein
+Kennzeichen im Bild. Diese Annahme nach dem Fotowechsel neu prüfen.
+
 ---
 
 ## Wie die Bilder laden
