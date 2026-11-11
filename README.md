@@ -202,3 +202,17 @@ tools/qr.sh            QR-Code für den Flyer.
 Die Palette (`#f5f1ea` Creme, `#1b1a17` Tinte, `#a4441f` Rost) ist aus den
 Farboperatoren des Flyer-PDFs ausgelesen, nicht nachempfunden — die Seite soll
 aussehen wie das Papier in der Hand des Scannenden.
+
+### Schutz gegen versehentliches Committen
+
+`tools/hooks/pre-commit` verweigert jeden Commit, der ein Foto enthält, das
+noch einen Eintrag in `content/masks.json` hat — also eines, dessen Kennzeichen
+nachweislich noch sichtbar ist. Ein unmaskiertes Schild in einem öffentlichen
+Repo lässt sich nicht zurücknehmen: auch wenn ein späterer Commit die Datei
+ersetzt, bleibt der ursprüngliche Blob dauerhaft abrufbar.
+
+Nach einem frischen `git clone` einmalig aktivieren:
+
+```bash
+git config core.hooksPath tools/hooks
+```

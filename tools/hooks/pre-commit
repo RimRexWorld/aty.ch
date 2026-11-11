@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+# Refuses to commit a photo that still has an open entry in content/masks.json.
+#
+# An unmasked number plate in a public repository cannot be taken back: even
+# if a later commit replaces the file, the original blob stays fetchable in
+# the history forever. So the check has to sit BEFORE the commit, not after.
+#
+# masks.json is the list of photos known to still show a plate, and it shrinks
+# as each one is finished — so this guard lifts itself, file by file, with no
+# second list to keep in step.
+set -euo pipefail
+
+masks=content/masks.json
+[ -f "$masks" ] || exit 0
+
+staged=$(git diff --cached --name-only --diff-filter=ACM | grep '^photos/' || true)
+[ -n "$staged" ] || exit 0
+
+blocked=""
+while IFS= read -r f; do
+  name=${f#photos/}
+  if grep -q "\"$name\"[[:space:]]*:" "$masks"; then
+    blocked="$blocked  $f"$'\n'
+  fi
+done <<< "$staged"
+
+if [ -n "$blocked" ]; then
+  echo "pre-commit: refusing to commit photos with an unmasked number plate." >&2
+  echo >&2
+  printf '%s' "$blocked" >&2
+  echo >&2
+  echo "These still have an entry in $masks, which means the plate is not" >&2
+  echo "covered yet. Mask them first:" >&2
+  echo >&2
+  echo "    nix develop -c node tools/mask.mjs --check" >&2
+  echo "    nix develop -c node tools/mask.mjs --apply" >&2
+  echo >&2
+  echo "then remove their entry from $masks." >&2
+  exit 1
+fi
