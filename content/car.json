@@ -1,0 +1,86 @@
+{
+  "_README": [
+    "Single source of truth for the whole site. Everything visible on aty.ch",
+    "comes from this file plus the photos in photos/.",
+    "",
+    "null means NOT YET FILLED IN. The build renders those as a loud amber",
+    "placeholder locally so you can see what is missing, and REFUSES to build",
+    "in --strict mode (which is what CI runs). That is deliberate: the flyer",
+    "PDF went out with $[PRICE] and [PHONE] still in it, and a published site",
+    "with a literal placeholder on it is worse than no site.",
+    "",
+    "Fill in every null, then `nix develop -c ./build.sh` to preview."
+  ],
+
+  "site": {
+    "domain": "aty.ch",
+    "lang": "en-AU",
+    "title": "2011 Mitsubishi Pajero 4WD — for sale in Australia",
+    "description": "2011 Mitsubishi Pajero RX, 4WD, with a 23ZERO rooftop tent and rear drawer system. Proven on beaches, dunes and the long roads up north. Ready for your trip."
+  },
+
+  "hero": {
+    "eyebrow": "For sale · 2011 Mitsubishi Pajero 4WD",
+    "headline": "She knows the way.",
+    "lede": "Red dunes, empty beaches, mountain lookouts, the Territory. This Pajero has seen more of Australia than most people ever will. Now it's ready for your trip."
+  },
+
+  "vehicle": {
+    "year": 2011,
+    "make": "Mitsubishi",
+    "model": "Pajero",
+    "variant": "RX",
+    "drive": "4WD",
+    "engine": "DI-D turbo diesel",
+    "engineSize": null,
+    "transmission": null,
+    "fuel": "Diesel",
+    "seats": null,
+    "colour": null,
+    "odometerKm": null
+  },
+
+  "sale": {
+    "priceAud": null,
+    "negotiable": true,
+    "regoState": null,
+    "regoExpiry": null,
+    "lastServiceDate": null,
+    "lastServiceKm": null,
+    "recentlyReplaced": [],
+    "knownIssues": null,
+    "availableFrom": null,
+    "location": null
+  },
+
+  "included": [
+    "23ZERO rooftop tent + ladder",
+    "Roof rack",
+    "Rear drawer system"
+  ],
+
+  "note": {
+    "heading": "A note from the current owner",
+    "author": null,
+    "body": [
+      null,
+      null,
+      null
+    ],
+    "_hint": [
+      "Three short paragraphs, in your own words. The flyer template suggested:",
+      "1. One real memory from the trip, in one or two sentences.",
+      "2. Why you are selling — the honest reason.",
+      "3. What you should know: a real note on condition. A small dent, what was",
+      "   recently replaced. Telling them now beats them finding it later."
+    ]
+  },
+
+  "contact": {
+    "name": null,
+    "phone": null,
+    "whatsapp": true,
+    "email": null,
+    "note": "Inspection and test drive welcome."
+  }
+}
