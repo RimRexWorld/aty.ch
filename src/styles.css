@@ -433,3 +433,17 @@ body.lb-open { overflow: hidden; }
 .skip:focus { left: 0; }
 
 :focus-visible { outline: 2px solid var(--rust); outline-offset: 3px; }
+
+/* Draft banner. Only rendered while something in content/ is still null, and
+ * paired with noindex — see the comment in tools/build.mjs. Deliberately not
+ * styled to blend in: its whole job is to stop an unfinished listing from
+ * passing as a finished one. */
+.draft {
+  margin: 0;
+  padding: 0.85rem var(--pad);
+  background: #2a2723;
+  color: #f0e4cf;
+  font-size: 0.875rem;
+  line-height: 1.45;
+  text-align: center;
+}

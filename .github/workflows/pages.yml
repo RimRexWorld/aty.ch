@@ -39,10 +39,19 @@ jobs:
             dist/img
           key: img-${{ hashFiles('photos/**', 'tools/build.mjs') }}
 
-      # --strict: fails the build if any field in content/ is still null.
-      # A published listing with "missing" where the price should be is worse
-      # than no listing at all.
-      - run: nix develop --command ./build.sh --strict
+      # Deliberately NOT --strict. An incomplete listing still deploys, because
+      # DNS, the certificate, Pages routing and the real load time from
+      # Australia cannot be tested against a page that does not exist.
+      #
+      # What stops a half-filled page from passing as finished is in the page
+      # itself, not here: while any field in content/ is null the build emits a
+      # "Preview — not finished yet" banner and a noindex meta, and both
+      # disappear on their own once the last field is filled. See the comment
+      # at the top of render() in tools/build.mjs.
+      #
+      # Run `./build.sh --strict` before printing the flyer — that is the gate
+      # that matters, because the QR code is the thing that cannot be recalled.
+      - run: nix develop --command ./build.sh
 
       - uses: actions/configure-pages@v5
 
