@@ -155,10 +155,12 @@ imagemagick` driftet mit jedem Ubuntu-Update.
 
 ### Einmalig einzurichten
 
-1. **Pages** aktiviert sich selbst — `configure-pages` läuft mit
-   `enablement: true` und setzt die Quelle auf „GitHub Actions". Falls das an
-   einer Organisations-Richtlinie scheitert, hilft der manuelle Weg:
-   Settings → Pages → Source → „GitHub Actions".
+1. **Repo → Settings → Pages → Source: „GitHub Actions"**. Einmalig und von
+   Hand. `configure-pages` kann das nicht selbst: mit `enablement: true`
+   antwortet die API „Resource not accessible by integration", weil
+   `GITHUB_TOKEN` eine Pages-Site deployen, aber nicht anlegen darf. Der
+   `permissions:`-Block im Workflow hilft dort nicht — er kann die Rechte des
+   Repos nur einschränken, nicht erweitern.
 2. **DNS bei Infomaniak** für die Apex-Domain `aty.ch` — vier A-Records:
 
    ```
