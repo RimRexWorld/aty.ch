@@ -8,8 +8,9 @@
 //
 // Usage:  node tools/build.mjs [--strict] [--serve]
 //
-//   --strict  fail on any unfilled (null) field in car.json. CI uses this, so
-//             a placeholder can never reach the published site.
+//   --strict  fail on any unfilled (null) field in car.json. NOT used by CI —
+//             an incomplete page still deploys, but marks itself as a preview
+//             and carries noindex. Run this before printing the flyer.
 //   --serve   build, then serve dist/ on :8080 for a local look.
 
 import { execFile, execFileSync } from "node:child_process";
@@ -281,13 +282,29 @@ function render(car, photos) {
 
   const css = fs.readFileSync(P("src", "styles.css"), "utf8");
 
+  // An incomplete listing is allowed to be published — you cannot test DNS, the
+  // certificate or the real load time from Australia against a page that does
+  // not exist. What it is NOT allowed to do is look finished.
+  //
+  // So instead of refusing to build, an incomplete page says so at the top and
+  // carries noindex: a half-filled listing that Google picks up would keep
+  // showing "missing" where the price goes long after the real one is live, and
+  // that outlives the convenience of previewing. Both vanish by themselves the
+  // moment the last field in content/ is filled.
+  const incomplete = missing.length > 0;
+  const noindex = incomplete ? `\n<meta name="robots" content="noindex, nofollow">` : "";
+  const banner = incomplete
+    ? `<p class="draft" role="status">Preview — this listing is not finished yet.
+  Price, odometer and contact details are still to come.</p>\n`
+    : "";
+
   return `<!doctype html>
 <html lang="${esc(car.site.lang)}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>${esc(car.site.title)}</title>
-<meta name="description" content="${esc(car.site.description)}">
+<meta name="description" content="${esc(car.site.description)}">${noindex}
 <meta name="theme-color" content="#f5f1ea">
 <link rel="canonical" href="https://${esc(car.site.domain)}/">
 <meta property="og:type" content="website">
@@ -326,6 +343,7 @@ addEventListener("DOMContentLoaded", function () {
 
 <a class="skip" href="#details">Skip to the details</a>
 
+${banner}
 <header class="hero">
   ${picture(hero.meta, { alt: hero.alt || vehicleName, sizes: "100vw", eager: true, className: "hero-img", index: 0 })}
   <div class="hero-text">
