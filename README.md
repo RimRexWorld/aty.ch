@@ -89,18 +89,24 @@ veröffentlichen und den Zweck genau verfehlen. Das unberührte Bild liegt in
 lässt sich also korrigieren und erneut anwenden, ohne dass sich Balken
 stapeln.
 
-**Stand:**
+**Stand:** `masks.json` ist leer, weil kein Foto im Repo mehr ein sichtbares
+Kennzeichen hat. Von den ursprünglich 16 Platzhaltern sind 7 übrig:
 
-- **Fertig, von Hand ausserhalb dieses Werkzeugs maskiert:** 01, 03, 04, 05,
-  06, 08, 10. Diese haben *keinen* Eintrag in `masks.json` mehr — ein neuer
-  Eintrag würde einen zweiten Balken auf ein bereits maskiertes Bild malen.
-- **Noch offen, Boxen sitzen noch nicht:** 07, 09, 11, 14, 15. Darunter 09
-  mit dem am besten lesbaren Schild des Satzes.
-- **Kein Kennzeichen im Bild:** 02, 12, 13, 16. Nach dem Fotowechsel neu
-  prüfen.
+- **Von Hand maskiert, weisser Balken:** 01, 03, 04, 05, 06, 08, 10.
+- **Wegen Kennzeichen gelöscht:** 07, 09, 11, 14, 15 (Schild sichtbar, Balken
+  sass nicht), 02 (Schild am Heck) und 16 — bei 16 war das *eigene* Schild
+  verdeckt, aber ein fremdes Fahrzeug im Hintergrund lesbar. Fremde
+  Kennzeichen wiegen schwerer als das eigene.
+- **Wegen abgebildeter Personen gelöscht:** 12, 13.
 
-Solange die fünf offenen nicht maskiert sind, darf `photos/` **nicht**
-committet werden.
+Zwei Lehren für die echten Fotos:
+
+1. Die Einstufung „kein Kennzeichen im Bild" war zweimal falsch (05, dann 02),
+   beide Male aus einer verkleinerten Übersicht heraus. Jedes Foto einzeln in
+   voller Auflösung beurteilen.
+2. Das Kennzeichen ist nicht das einzige Kriterium. Erkennbare Personen,
+   fremde Fahrzeuge und Hausnummern gehören genauso geprüft — und ob eine
+   abgebildete Person öffentlich stehen will, beantwortet kein Werkzeug.
 
 ---
 
