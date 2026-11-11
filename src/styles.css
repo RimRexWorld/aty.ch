@@ -1,0 +1,435 @@
+/* aty.ch — inlined into index.html by tools/build.mjs.
+ *
+ * Deliberately light-only. The page's whole job is to be the screen half of a
+ * printed flyer: someone is holding the paper, scanning the code, and should
+ * land somewhere that looks like what is in their hand. A dark variant would
+ * break that recognition for no real gain on a page this short.
+ *
+ * Palette is lifted from the flyer PDF's own colour operators, not re-picked.
+ */
+
+:root {
+  --paper: #f5f1ea;
+  --paper-sunk: #efeae1;
+  --ink: #1b1a17;
+  --ink-soft: #3d3934;
+  --muted: #5e5850;
+  --rule: #cfc6b8;
+  --rule-soft: #ddd6ca;
+  --rust: #a4441f;
+
+  --serif: "Instrument Serif", "Iowan Old Style", Palatino, Georgia, serif;
+  --sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  --pad: clamp(1.25rem, 5vw, 2.5rem);
+  --max: 68rem;
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("fonts/inter-latin.woff2") format("woff2");
+  /* Matches the range tools/fonts.sh instanced the file to. Declaring a
+   * wider range than the font carries makes the browser synthesise bold. */
+  font-weight: 400 600;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Instrument Serif";
+  src: url("fonts/instrument-serif-latin.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+2000-206F, U+2122, U+FEFF, U+FFFD;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 1rem;
+  line-height: 1.65;
+  font-feature-settings: "kern", "liga";
+  -webkit-font-smoothing: antialiased;
+}
+
+img { max-width: 100%; }
+
+a { color: inherit; }
+
+h1, h2 {
+  font-family: var(--serif);
+  font-weight: 400;
+  letter-spacing: -0.015em;
+  line-height: 0.98;
+  margin: 0;
+}
+
+/* ------------------------------------------------------------- progressive */
+
+/* The wrapper owns the geometry: aspect ratio, a dominant-colour fill and the
+ * inlined 24px LQIP. All three are in the HTML before a single image byte is
+ * requested, so the page never reflows and never shows a white hole. */
+.ph {
+  position: relative;
+  margin: 0;
+  overflow: hidden;
+  aspect-ratio: var(--ar, 4 / 3);
+  background-color: var(--bg, var(--paper-sunk));
+}
+
+.ph::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: var(--lqip);
+  background-size: cover;
+  background-position: center;
+  /* Scaled past the edges so the blur radius never reveals a soft border. */
+  transform: scale(1.15);
+  filter: blur(18px) saturate(1.15);
+  transition: opacity 0.45s ease 0.1s;
+}
+
+.ph img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.45s ease;
+}
+
+.ph[data-loaded] img { opacity: 1; }
+.ph[data-loaded]::before { opacity: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .ph img, .ph::before { transition-duration: 1ms; }
+}
+
+/* ------------------------------------------------------------------- hero */
+
+.hero-img {
+  aspect-ratio: auto;
+  height: clamp(16rem, 58vh, 34rem);
+  width: 100%;
+  cursor: zoom-in;
+}
+
+.hero-text {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: clamp(2rem, 6vw, 3.5rem) var(--pad) 0;
+}
+
+.eyebrow {
+  margin: 0 0 0.9rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.17em;
+  text-transform: uppercase;
+  color: var(--rust);
+}
+
+h1 { font-size: clamp(2.75rem, 9vw, 5.25rem); }
+
+.lede {
+  max-width: 34em;
+  margin: 1.25rem 0 0;
+  font-size: clamp(1.02rem, 2.2vw, 1.2rem);
+  color: var(--muted);
+}
+
+/* ------------------------------------------------------------------ stats */
+
+.stats {
+  max-width: var(--max);
+  margin: clamp(2.5rem, 7vw, 4rem) auto 0;
+  padding: 0 var(--pad);
+}
+
+/* The column count is stated rather than left to auto-fit. The dividers are
+ * left-hand rules, so the first cell of every ROW has to drop its rule and its
+ * padding — and that is only expressible if the breakpoint knows how many
+ * columns there are. With auto-fit, "Rego" wrapped to a second row still
+ * carrying a rule and sat indented against "Price" above it. */
+.stats dl {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  margin: 0;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+}
+
+.stats div {
+  padding: 1.1rem 1.25rem 1.2rem;
+  border-left: 1px solid var(--rule-soft);
+}
+
+.stats div:nth-child(odd) { border-left: 0; padding-left: 0; }
+.stats div:nth-child(n + 3) { border-top: 1px solid var(--rule-soft); }
+
+@media (min-width: 46rem) {
+  .stats dl { grid-template-columns: repeat(4, 1fr); }
+  .stats div:nth-child(odd) { border-left: 1px solid var(--rule-soft); padding-left: 1.25rem; }
+  .stats div:nth-child(n + 3) { border-top: 0; }
+  .stats div:first-child { border-left: 0; padding-left: 0; }
+}
+
+.stats dt {
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.stats dd {
+  margin: 0.35rem 0 0;
+  font-size: 1.3rem;
+  font-family: var(--serif);
+  line-height: 1.1;
+}
+
+.ono {
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+}
+
+/* ---------------------------------------------------------------- gallery */
+
+.gallery {
+  max-width: var(--max);
+  margin: clamp(2.5rem, 7vw, 4.5rem) auto 0;
+  padding: 0 var(--pad);
+}
+
+/* Columns rather than a grid: the photos are a mix of portrait and landscape,
+ * and a grid would either crop them all to one ratio or leave ragged holes.
+ * Column flow keeps every frame at its true shape with no JS and no cropping. */
+.grid {
+  columns: 3 17rem;
+  column-gap: 0.625rem;
+}
+
+.grid .ph {
+  break-inside: avoid;
+  margin-bottom: 0.625rem;
+  cursor: zoom-in;
+  background-color: var(--bg, var(--paper-sunk));
+}
+
+.gallery-hint {
+  margin: 1.5rem 0 0;
+  font-size: 0.8125rem;
+  color: var(--muted);
+}
+
+/* ------------------------------------------------------------------- note */
+
+.note, .details, .contact {
+  max-width: var(--max);
+  margin: clamp(3rem, 8vw, 5rem) auto 0;
+  padding: 0 var(--pad);
+}
+
+.prose {
+  max-width: 36em;
+  font-size: 1.0625rem;
+  color: var(--ink-soft);
+}
+
+.prose p { margin: 0 0 1.1rem; }
+
+.signoff {
+  font-family: var(--serif);
+  font-size: 1.375rem;
+  color: var(--ink);
+  margin: 1.75rem 0 0;
+}
+
+/* ---------------------------------------------------------------- details */
+
+.details h2 { font-size: clamp(2rem, 5.5vw, 3rem); margin-bottom: 1.75rem; }
+
+.details table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+}
+
+.details tr { border-bottom: 1px solid var(--rule-soft); }
+.details tr:first-child { border-top: 1px solid var(--rule); }
+
+.details th {
+  text-align: left;
+  font-weight: 400;
+  color: var(--muted);
+  padding: 0.8rem 1.5rem 0.8rem 0;
+  width: 13rem;
+  vertical-align: top;
+}
+
+.details td { padding: 0.8rem 0; font-weight: 500; }
+
+@media (max-width: 34rem) {
+  .details th { display: block; width: auto; padding-bottom: 0.1rem; font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; }
+  .details td { display: block; padding-top: 0; padding-bottom: 0.9rem; }
+}
+
+/* ---------------------------------------------------------------- contact */
+
+.contact {
+  padding-top: clamp(2.5rem, 7vw, 4rem);
+  padding-bottom: clamp(2.5rem, 7vw, 4rem);
+  border-top: 1px solid var(--rule);
+}
+
+.contact-big { margin: 0; }
+
+.tel {
+  font-family: var(--serif);
+  font-size: clamp(2.25rem, 8vw, 4rem);
+  text-decoration: none;
+  line-height: 1;
+  display: inline-block;
+}
+
+.tel:hover { color: var(--rust); }
+
+.alt-contacts { margin: 0.9rem 0 0; font-size: 0.9375rem; }
+.alt-contacts .sep { color: var(--rule); margin: 0 0.6rem; }
+
+.link-alt { color: var(--rust); text-underline-offset: 0.2em; }
+
+.who { margin: 1.25rem 0 0; font-size: 1rem; }
+
+.contact-note { margin: 0.35rem 0 0; color: var(--muted); font-size: 0.9375rem; }
+
+footer {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 1.5rem var(--pad) 3rem;
+  border-top: 1px solid var(--rule-soft);
+  font-size: 0.8125rem;
+  color: var(--muted);
+}
+
+footer p { margin: 0; }
+
+/* -------------------------------------------------------------- lightbox */
+
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: rgba(16, 15, 13, 0.94);
+  display: grid;
+  place-items: center;
+  padding: clamp(0.5rem, 3vw, 2.5rem);
+  overscroll-behavior: contain;
+}
+
+.lightbox[hidden] { display: none; }
+
+.lb-stage {
+  max-width: 100%;
+  max-height: 100%;
+  display: grid;
+  place-items: center;
+}
+
+.lb-stage img {
+  max-width: 100%;
+  max-height: 86vh;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  /* The thumbnail is already decoded, so the big file arrives over the top of
+   * a sharp image rather than over nothing. */
+  background-size: cover;
+  background-position: center;
+}
+
+.lightbox button {
+  position: absolute;
+  background: none;
+  border: 0;
+  color: #f5f1ea;
+  font-family: var(--sans);
+  cursor: pointer;
+  line-height: 1;
+  padding: 0.5rem 0.75rem;
+  opacity: 0.75;
+  transition: opacity 0.15s;
+}
+
+.lightbox button:hover, .lightbox button:focus-visible { opacity: 1; }
+
+.lb-close { top: 0.5rem; right: 0.75rem; font-size: 2.25rem; }
+.lb-prev, .lb-next { top: 50%; transform: translateY(-50%); font-size: 3rem; }
+.lb-prev { left: 0.25rem; }
+.lb-next { right: 0.25rem; }
+
+.lb-count {
+  position: absolute;
+  bottom: 1rem;
+  left: 0;
+  right: 0;
+  text-align: center;
+  margin: 0;
+  color: #cfc6b8;
+  font-size: 0.8125rem;
+  letter-spacing: 0.08em;
+}
+
+body.lb-open { overflow: hidden; }
+
+/* ------------------------------------------------------------------ utils */
+
+/* Only ever visible on a local build — --strict refuses to publish with any
+ * of these on the page. */
+.todo {
+  background: #ffe9b8;
+  color: #7a4a00;
+  border-bottom: 1px dashed #c8922c;
+  padding: 0 0.3em;
+  font-family: var(--sans);
+  font-size: 0.85em;
+  font-style: italic;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.skip {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  background: var(--ink);
+  color: var(--paper);
+  padding: 0.75rem 1rem;
+  z-index: 100;
+}
+
+.skip:focus { left: 0; }
+
+:focus-visible { outline: 2px solid var(--rust); outline-offset: 3px; }

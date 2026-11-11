@@ -1,0 +1,30 @@
+{
+  "_README": [
+    "Alt text per photo, keyed by filename in photos/. Order on the page is the",
+    "filename order, so the numeric prefix is what you reorder with — the first",
+    "photo is the hero and the OpenGraph preview image.",
+    "",
+    "Drop a new file into photos/ and the next build adds it here with",
+    "alt: null for you to fill in. Delete a file and remove its line.",
+    "",
+    "Alt text is what a blind buyer and every search engine get instead of the",
+    "picture. Describe what is actually in frame, not the mood."
+  ],
+
+  "01-red-dune.jpg": { "alt": "The Pajero parked on a red sand dune under a deep blue sky, roof rack and rooftop tent loaded" },
+  "02-northern-territory-sign.jpg": { "alt": "The Pajero next to the Northern Territory border sign, two people standing on the roof" },
+  "03-mountain-lookout.jpg": { "alt": "The Pajero at a mountain lookout with a wide valley and cloudy sky behind" },
+  "04-beach.jpg": { "alt": "The Pajero parked on hard sand at the edge of a beach" },
+  "05-sand-track.jpg": { "alt": "The Pajero on a sandy coastal track" },
+  "06-palms.jpg": { "alt": "The Pajero on a roadside lined with tall palms" },
+  "07-camp-under-palms.jpg": { "alt": "Camp set up under palm trees, rooftop tent open on the roof rack" },
+  "08-forest-camp.jpg": { "alt": "The Pajero at a forest campsite with the rooftop tent pitched and the ladder down" },
+  "09-tent-open-front.jpg": { "alt": "Front view of the Pajero with the rooftop tent fully open" },
+  "10-awning.jpg": { "alt": "The Pajero with its side awning extended at a bush campsite" },
+  "11-outback-sunset.jpg": { "alt": "The Pajero on red outback dirt at sunset, a lone tree beside it" },
+  "12-tailgate-kitchen.jpg": { "alt": "The rear drawer system open at the tailgate, camp kitchen set up on a table" },
+  "13-camp-chairs.jpg": { "alt": "Camp chairs and a table beside the Pajero in open eucalypt forest" },
+  "14-red-dirt-golden-hour.jpg": { "alt": "The Pajero on red dirt in golden evening light, rooftop tent closed" },
+  "15-dusk.jpg": { "alt": "Front three-quarter view of the Pajero at dusk under a mackerel sky" },
+  "16-undercover-parking.jpg": { "alt": "Side view of the Pajero parked undercover, showing the full length of the roof rack" }
+}
