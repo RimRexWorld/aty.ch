@@ -155,8 +155,10 @@ imagemagick` driftet mit jedem Ubuntu-Update.
 
 ### Einmalig einzurichten
 
-1. **Repo → Settings → Pages → Source: „GitHub Actions"**. Ohne das läuft der
-   Workflow und deployt ins Leere.
+1. **Pages** aktiviert sich selbst — `configure-pages` läuft mit
+   `enablement: true` und setzt die Quelle auf „GitHub Actions". Falls das an
+   einer Organisations-Richtlinie scheitert, hilft der manuelle Weg:
+   Settings → Pages → Source → „GitHub Actions".
 2. **DNS bei Infomaniak** für die Apex-Domain `aty.ch` — vier A-Records:
 
    ```
@@ -177,8 +179,8 @@ imagemagick` driftet mit jedem Ubuntu-Update.
    `public/CNAME` enthält bereits `aty.ch`, das Zertifikat macht GitHub
    automatisch — nach dem DNS-Setup in den Pages-Settings noch „Enforce HTTPS"
    anhaken.
-3. Zone ist bereits bei Infomaniak (`ns11`/`ns12`), A-Record existiert noch
-   nicht. Erst nach dem Setzen kann GitHub das Zertifikat ausstellen.
+3. DNS ist gesetzt (Stand 12.11.2026): vier A-, vier AAAA-Records und
+   `www` als CNAME.
 
 ### QR-Code für den Aushang
 
