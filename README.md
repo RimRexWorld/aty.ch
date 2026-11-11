@@ -178,11 +178,22 @@ imagemagick` driftet mit jedem Ubuntu-Update.
    ```
 
    `www.aty.ch` als CNAME auf `rimrexworld.github.io.`, falls gewünscht.
-   `public/CNAME` enthält bereits `aty.ch`, das Zertifikat macht GitHub
-   automatisch — nach dem DNS-Setup in den Pages-Settings noch „Enforce HTTPS"
-   anhaken.
-3. DNS ist gesetzt (Stand 12.11.2026): vier A-, vier AAAA-Records und
-   `www` als CNAME.
+3. **Settings → Pages → Custom domain: `aty.ch`**, speichern. Auch das von
+   Hand. `public/CNAME` liegt zwar im Deploy-Artefakt und enthält den
+   richtigen Namen, aber **bei Actions-basiertem Deploy ignoriert GitHub
+   eine CNAME-Datei** — das Verhalten stammt aus der alten branch-basierten
+   Veröffentlichung. Ohne den Eintrag antwortet `aty.ch` zwar, aber mit einem
+   Zertifikat, das den Namen nicht abdeckt.
+4. Danach stellt GitHub das Zertifikat aus (ein paar Minuten, „Certificate
+   being provisioned" ist normal). Erst dann wird **Enforce HTTPS**
+   anklickbar.
+DNS ist gesetzt (Stand 12.11.2026): vier A-, vier AAAA-Records und `www` als
+CNAME.
+
+Die Seite läuft parallel immer auch unter `rimrexworld.github.io/aty.ch/`.
+Dass sie dort ohne Anpassung funktioniert, liegt an den durchgehend relativen
+Pfaden im HTML — eine absolute `/app.js`-Referenz wäre unter dem Unterpfad
+ins Leere gelaufen.
 
 ### QR-Code für den Aushang
 
