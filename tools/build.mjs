@@ -399,12 +399,27 @@ ${specRows(car)}
 async function main() {
   const car = JSON.parse(fs.readFileSync(P("content", "car.json"), "utf8"));
 
+  // Missing and empty are the same outcome but not the same cause, and on a
+  // CI runner the raw ENOENT from readdirSync says neither. The usual reason
+  // the directory is absent is that photos/ has not been committed yet,
+  // because tools/hooks/pre-commit is still holding back photos with an
+  // unmasked plate — worth saying outright rather than rediscovering.
+  if (!fs.existsSync(P("photos"))) {
+    throw new Error(
+      "photos/ does not exist.\n" +
+      "  On a CI runner this means photos/ is not committed. That is the\n" +
+      "  normal state while any photo still has an entry in content/masks.json:\n" +
+      "  its number plate is not covered yet and the pre-commit hook refuses it.\n" +
+      "  Finish masking, drop the entries, then commit photos/."
+    );
+  }
+
   const files = fs
     .readdirSync(P("photos"))
     .filter((f) => /\.(jpe?g|png|webp|avif|heic)$/i.test(f))
     .sort((a, b) => a.localeCompare(b, "en", { numeric: true }));
 
-  if (files.length === 0) throw new Error("photos/ is empty — nothing to build");
+  if (files.length === 0) throw new Error("photos/ exists but holds no images — nothing to build");
 
   // Per-photo alt text and ordering. Regenerated as a scaffold when photos
   // appear that it does not know about, so dropping in new files just works.

@@ -20,11 +20,6 @@
     "",
     "02, 12, 13 and 16 have no plate in frame. Check that again after the",
     "placeholders are replaced."
-  ],
+  ]
 
-  "07-camp-under-palms.jpg": { "boxes": [[0.325, 0.705, 0.085, 0.045]] },
-  "09-tent-open-front.jpg": { "boxes": [[0.545, 0.850, 0.165, 0.055]] },
-  "11-outback-sunset.jpg": { "boxes": [[0.375, 0.640, 0.080, 0.042]] },
-  "14-red-dirt-golden-hour.jpg": { "boxes": [[0.855, 0.690, 0.110, 0.048]] },
-  "15-dusk.jpg": { "boxes": [[0.085, 0.520, 0.125, 0.052]] }
 }

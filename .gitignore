@@ -3,3 +3,8 @@ dist/
 node_modules/
 result
 .originals/
+
+# Un-reviewed media. Remove this line deliberately if video is meant
+# to go on the site — anything committed here is public forever.
+*.mp4
+*.mov
