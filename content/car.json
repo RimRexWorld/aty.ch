@@ -22,8 +22,7 @@
   "hero": {
     "eyebrow": "For sale · 2011 Mitsubishi Pajero 4WD",
     "headline": "Toffee knows the way.",
-    "lede": "Red dunes, empty beaches, mountain lookouts, the Territory.
-This Pajero has been there and back. It’s ready to go again, this time with you behind the wheel."
+    "lede": "Red dunes, empty beaches, mountain lookouts, the Territory. This Pajero has been there and back. It’s ready to go again, this time with you behind the wheel."
   },
 
   "vehicle": {
@@ -33,55 +32,50 @@ This Pajero has been there and back. It’s ready to go again, this time with yo
     "variant": "GLX",
     "drive": "4WD",
     "engine": "DI-D turbo diesel",
-    "engineSize": 3.2L,
-    "transmission": Automatic,
+    "engineSize": "3.2L",
+    "transmission": "Automatic",
     "fuel": "Diesel",
     "seats": 5,
-    "colour": Ironbark / Brown / Grey,
-    "odometerKm": 375,000 km.
+    "colour": "Ironbark (brown/grey)",
+    "odometerKm": 375000
   },
 
   "sale": {
-    "priceAud": On request,
+    "priceAud": "On request",
     "negotiable": true,
-    "regoState": WA,
-    "regoExpiry": 04/03/2027,
-    "lastServiceDate": 24/08/2026,
-    "lastServiceKm": 368'119,
-    "serviceHistory": Full service history available (paper and digital),
-    "availableFrom": Now,
-    "location": Bendigo Vic.
+    "regoState": "WA",
+    "regoExpiry": "04/03/2027",
+    "lastServiceDate": "24/08/2026",
+    "lastServiceKm": 368119,
+    "serviceHistory": "Full service history available (paper and digital)",
+    "availableFrom": "Now",
+    "location": "Bendigo, VIC"
   },
 
   "included": [
     "180cm 23ZERO rooftop tent + ladder",
     "Roof rack",
-    "Rear drawer system"
-    " Fridge"
-    "Tabel and 3 Chairs > used condition"
-    " Full camping kitchen setup (cookware, utensils, the lot)"
-    "Cast iron cookware for campfire cooking"
-    "4x4 off-road air compressor 4x4 – brand new, never used"
+    "Rear drawer system",
+    "Fridge",
+    "Table and 3 chairs (used condition)",
+    "Full camping kitchen setup (cookware, utensils, the lot)",
+    "Cast iron cookware for campfire cooking",
+    "4x4 off-road air compressor – brand new, never used",
     "Tool kit for roadside fixes"
-    
   ],
 
   "note": {
-    "heading": ",
-    
-    ],
-    "_hint": [
-      "Three short paragraphs, in your own words. The flyer template suggested:",
-      "1. My favourite night was camped at Watarrka National Park, cooking on the fire while the sun went down over the NT."] Toffee wasn't just my car – he was my home.",
-      "2. My road trip is coming to an end and it's time for him to move on. I'd love him to go to someone who'll really use him.",
-      "3. Yes, he's done 368,000 km – but you won't find a single engine problem or major repair in his history, just regular services. Fresh oil and all new filters in August 2026. Come and see him for yourself and take him for a drive."
-     
+    "heading": "Toffee's story",
+    "paragraphs": [
+      "My favourite night was camped at Watarrka National Park, cooking on the fire while the sun went down over the NT. Toffee wasn't just my car – he was my home.",
+      "My road trip is coming to an end and it's time for him to move on. I'd love him to go to someone who'll really use him.",
+      "Yes, he's done 375,000 km – but you won't find a single engine problem or major repair in his history, just regular services. Fresh oil and all new filters in August 2026. Come and see him for yourself and take him for a drive."
     ]
   },
 
   "contact": {
-    "name": Kiara,
-    "phone": +61 439 952 139,
+    "name": "Kiara",
+    "phone": "+61 439 952 139",
     "note": "Inspection and test drive welcome."
   }
 }
