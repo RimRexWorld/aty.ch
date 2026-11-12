@@ -42,15 +42,21 @@
 
   "sale": {
     "price": "On request",
-    "negotiable": true,
+    "priceAud": "On request",
+    "negotiable": false,
     "regoState": "WA",
     "regoExpiry": "04/03/2027",
     "lastServiceDate": "24/08/2026",
     "lastServiceKm": 368119,
     "serviceHistory": "Full service history available (paper and digital)",
     "availableFrom": "Now",
-    "location": "Bendigo, VIC"
+    "location": "Bendigo, VIC",
+    "recentlyReplaced": ["Engine oil and all filters (August 2026)"],
+    "goodToKnow": ["Full service history available", "Inspection and test drive welcome"]
   },
+
+  "recentlyReplaced": ["Engine oil and all filters (August 2026)"],
+  "goodToKnow": ["Full service history available", "Inspection and test drive welcome"],
 
   "included": [
     "180cm 23ZERO rooftop tent + ladder",
@@ -66,11 +72,21 @@
 
   "note": {
     "heading": "Toffee's story",
-    "paragraphs": ["My favourite night was camped at Watarrka National Park, cooking on the fire while the sun went down over the NT. Toffee wasn't just my car – he was my home.",
+    "paragraphs": [
+      "My favourite night was camped at Watarrka National Park, cooking on the fire while the sun went down over the NT. Toffee wasn't just my car – he was my home.",
+      "My road trip is coming to an end and it's time for him to move on. I'd love him to go to someone who'll really use him.",
+      "Yes, he's done 375,000 km – but you won't find a single engine problem or major repair in his history, just regular services. Fresh oil and all new filters in August 2026. Come and see him for yourself and take him for a drive."
+    ],
+    "body": [
+      "My favourite night was camped at Watarrka National Park, cooking on the fire while the sun went down over the NT. Toffee wasn't just my car – he was my home.",
+      "My road trip is coming to an end and it's time for him to move on. I'd love him to go to someone who'll really use him.",
+      "Yes, he's done 375,000 km – but you won't find a single engine problem or major repair in his history, just regular services. Fresh oil and all new filters in August 2026. Come and see him for yourself and take him for a drive."
+    ],
+    "text": [
+      "My favourite night was camped at Watarrka National Park, cooking on the fire while the sun went down over the NT. Toffee wasn't just my car – he was my home.",
       "My road trip is coming to an end and it's time for him to move on. I'd love him to go to someone who'll really use him.",
       "Yes, he's done 375,000 km – but you won't find a single engine problem or major repair in his history, just regular services. Fresh oil and all new filters in August 2026. Come and see him for yourself and take him for a drive."
     ]
-      
   },
 
   "contact": {
