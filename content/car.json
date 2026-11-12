@@ -16,71 +16,72 @@
     "domain": "aty.ch",
     "lang": "en-AU",
     "title": "2011 Mitsubishi Pajero 4WD — for sale in Australia",
-    "description": "2011 Mitsubishi Pajero RX, 4WD, with a 23ZERO rooftop tent and rear drawer system. Proven on beaches, dunes and the long roads up north. Ready for your trip."
+    "description": "2011 Mitsubishi Pajero, 4WD, with a 23ZERO rooftop tent and rear drawer system. Proven on beaches, dunes and the long roads up north. Ready for your trip."
   },
 
   "hero": {
     "eyebrow": "For sale · 2011 Mitsubishi Pajero 4WD",
-    "headline": "She knows the way.",
-    "lede": "Red dunes, empty beaches, mountain lookouts, the Territory. This Pajero has seen more of Australia than most people ever will. Now it's ready for your trip."
+    "headline": "Toffee knows the way.",
+    "lede": "Red dunes, empty beaches, mountain lookouts, the Territory.
+This Pajero has been there and back. It’s ready to go again, this time with you behind the wheel."
   },
 
   "vehicle": {
     "year": 2011,
     "make": "Mitsubishi",
     "model": "Pajero",
-    "variant": "RX",
+    "variant": "GLX",
     "drive": "4WD",
     "engine": "DI-D turbo diesel",
-    "engineSize": null,
-    "transmission": null,
+    "engineSize": 3.2L,
+    "transmission": Automatic,
     "fuel": "Diesel",
-    "seats": null,
-    "colour": null,
-    "odometerKm": null
+    "seats": 5,
+    "colour": Ironbark / Brown / Grey,
+    "odometerKm": 375,000 km.
   },
 
   "sale": {
-    "priceAud": null,
+    "priceAud": On request,
     "negotiable": true,
-    "regoState": null,
-    "regoExpiry": null,
-    "lastServiceDate": null,
-    "lastServiceKm": null,
-    "recentlyReplaced": [],
-    "knownIssues": null,
-    "availableFrom": null,
-    "location": null
+    "regoState": WA,
+    "regoExpiry": 04/03/2027,
+    "lastServiceDate": 24/08/2026,
+    "lastServiceKm": 368'119,
+    "serviceHistory": Full service history available (paper and digital),
+    "availableFrom": Now,
+    "location": Bendigo Vic.
   },
 
   "included": [
-    "23ZERO rooftop tent + ladder",
+    "180cm 23ZERO rooftop tent + ladder",
     "Roof rack",
     "Rear drawer system"
+    " Fridge"
+    "Tabel and 3 Chairs > used condition"
+    " Full camping kitchen setup (cookware, utensils, the lot)"
+    "Cast iron cookware for campfire cooking"
+    "4x4 off-road air compressor 4x4 – brand new, never used"
+    "Tool kit for roadside fixes"
+    
   ],
 
   "note": {
-    "heading": "A note from the current owner",
-    "author": null,
-    "body": [
-      null,
-      null,
-      null
+    "heading": ",
+    
     ],
     "_hint": [
       "Three short paragraphs, in your own words. The flyer template suggested:",
-      "1. One real memory from the trip, in one or two sentences.",
-      "2. Why you are selling — the honest reason.",
-      "3. What you should know: a real note on condition. A small dent, what was",
-      "   recently replaced. Telling them now beats them finding it later."
+      "1. My favourite night was camped at Watarrka National Park, cooking on the fire while the sun went down over the NT."] Toffee wasn't just my car – he was my home.",
+      "2. My road trip is coming to an end and it's time for him to move on. I'd love him to go to someone who'll really use him.",
+      "3. Yes, he's done 368,000 km – but you won't find a single engine problem or major repair in his history, just regular services. Fresh oil and all new filters in August 2026. Come and see him for yourself and take him for a drive."
+     
     ]
   },
 
   "contact": {
-    "name": null,
-    "phone": null,
-    "whatsapp": true,
-    "email": null,
+    "name": Kiara,
+    "phone": +61 439 952 139,
     "note": "Inspection and test drive welcome."
   }
 }
