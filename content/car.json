@@ -41,7 +41,7 @@
   },
 
   "sale": {
-    "priceAud": "On request",
+    "price": "On request",
     "negotiable": true,
     "regoState": "WA",
     "regoExpiry": "04/03/2027",
