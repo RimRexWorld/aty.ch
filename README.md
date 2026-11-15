@@ -61,6 +61,12 @@ Der nächste Build trägt neue Dateien automatisch in `content/photos.json` mit
 Originale in voller Auflösung hineinlegen, nicht vorskalieren — der Build
 erzeugt alle Grössen selbst und kann nur verkleinern.
 
+Leerzeichen und Klammern im Dateinamen sind in Ordnung: der Build benennt die
+erzeugten Dateien um, weil ein Leerzeichen im `srcset` die URL vom
+Breiten-Deskriptor trennt und `WhatsApp Image.jpg` sonst als Anfrage nach
+`img/WhatsApp` endet. Der Originalname bleibt der Schlüssel in `photos.json`
+und bestimmt weiterhin die Reihenfolge.
+
 > **Die aktuellen Fotos sind Platzhalter**, aus dem Flyer-PDF extrahiert
 > (1600 px). Auf mehreren ist das **Kennzeichen lesbar** — vor dem ersten Push
 > maskieren oder durch maskierte Originale ersetzen.
@@ -122,15 +128,25 @@ Beim Laden passiert dann:
    Bild-Byte angefragt wurde — kein Umspringen, nie ein weisses Loch.
 2. CSS skaliert das 24-px-Bild hoch und legt `blur(18px)` darüber. Das ist der
    verpixelte Vorschauzustand, kostet **null zusätzliche Requests** und für
-   alle 16 Fotos zusammen 4,8 kB.
+   alle Fotos zusammen rund 0,3 kB pro Bild.
 3. Sobald das echte Bild dekodiert ist, setzt ein Listener `data-loaded` auf
    den Wrapper und das scharfe Bild blendet in 0,45 s über die Unschärfe.
 
-Der Listener hängt in der **Capture-Phase** am `window`: `load` von `<img>`
-steigt nicht auf, und ein Bild aus dem Cache kann fertig sein, bevor das Script
-überhaupt geparst ist — dafür gibt es zusätzlich den `DOMContentLoaded`-Sweep.
-Ohne beides bliebe ein gecachtes Bild unsichtbar. Ohne JS zeigt ein
-`<noscript>`-Block alles sofort scharf.
+Der Listener hängt in der **Capture-Phase an `document`**, nicht an `window`.
+`load` von `<img>` steigt nicht auf, muss also im Capture abgefangen werden —
+aber `window` liegt nicht im Ereignispfad eines Ressourcen-`load`, ein
+Listener dort feuert nie. (Für Ressourcen-**`error`** funktioniert `window`
+sehr wohl; genau damit war es verwechselt.) Gemessen bei elf Bildern:
+`window` sah 0 Events, `document` sah 11.
+
+Zusätzlich läuft ein `DOMContentLoaded`-Sweep über alles, was schon
+`complete` ist — nötig für Bilder aus dem Cache, die fertig sein können, bevor
+das Script geparst ist. Ohne JS zeigt ein `<noscript>`-Block alles sofort
+scharf.
+
+> Dieser Fehler war lange unsichtbar, weil der Sweep jeden Reload rettete.
+> Nur der kalte Erstbesuch blieb auf den unscharfen Platzhaltern stehen — also
+> genau der Fall, den die ganze Technik bedienen soll.
 
 Was ein Besucher wirklich lädt:
 

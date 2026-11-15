@@ -10,12 +10,37 @@
     "Alt text is what a blind buyer and every search engine get instead of the",
     "picture. Describe what is actually in frame, not the mood."
   ],
-
-  "01-red-dune.jpg": { "alt": "The Pajero parked on a red sand dune under a deep blue sky, roof rack and rooftop tent loaded" },
-  "03-mountain-lookout.jpg": { "alt": "The Pajero at a mountain lookout with a wide valley and cloudy sky behind" },
-  "04-beach.jpg": { "alt": "The Pajero parked on hard sand at the edge of a beach" },
-  "05-sand-track.jpg": { "alt": "The Pajero on a sandy coastal track" },
-  "06-palms.jpg": { "alt": "The Pajero on a roadside lined with tall palms" },
-  "08-forest-camp.jpg": { "alt": "The Pajero at a forest campsite with the rooftop tent pitched and the ladder down" },
-  "10-awning.jpg": { "alt": "The Pajero with its side awning extended at a bush campsite" }
+  "01-red-dune.jpg": {
+    "alt": "The Pajero parked on a red sand dune under a deep blue sky, roof rack and rooftop tent loaded"
+  },
+  "03-mountain-lookout.jpg": {
+    "alt": "The Pajero at a mountain lookout with a wide valley and cloudy sky behind"
+  },
+  "04-beach.jpg": {
+    "alt": "The Pajero parked on hard sand at the edge of a beach"
+  },
+  "05-sand-track.jpg": {
+    "alt": "The Pajero on a sandy coastal track"
+  },
+  "06-palms.jpg": {
+    "alt": "The Pajero on a roadside lined with tall palms"
+  },
+  "08-forest-camp.jpg": {
+    "alt": "The Pajero at a forest campsite with the rooftop tent pitched and the ladder down"
+  },
+  "10-awning.jpg": {
+    "alt": "The Pajero with its side awning extended at a bush campsite"
+  },
+  "Bild 9.png": {
+    "alt": null
+  },
+  "WhatsApp Image 2026-11-11 at 22.06.54.jpeg": {
+    "alt": null
+  },
+  "WhatsApp Image 2026-11-11 at 22.06.56 (1).jpeg": {
+    "alt": null
+  },
+  "WhatsApp Image 2026-11-12 at 23.25.28 (1).jpeg": {
+    "alt": null
+  }
 }

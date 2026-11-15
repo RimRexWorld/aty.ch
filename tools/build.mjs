@@ -95,9 +95,37 @@ function hashFile(file) {
  * needs. Cached on the source file's content hash, so re-running after a copy
  * edit is instant and swapping one photo only rebuilds that photo.
  */
-async function processPhoto(src) {
-  const slug = path.basename(src).replace(/\.[^.]+$/, "");
-  const hash = hashFile(src);
+/**
+ * Output filenames must survive a srcset. A space there separates the URL from
+ * its width descriptor, so "WhatsApp Image 2026.jpg" silently becomes a
+ * request for "img/WhatsApp" — a broken image with no error anywhere in the
+ * build. Parentheses and non-ASCII are sanitised for the same class of reason.
+ *
+ * The ORIGINAL filename stays the key in content/photos.json and still decides
+ * gallery order; only the emitted derivative is renamed.
+ */
+const takenSlugs = new Set();
+
+function slugFor(file, hash) {
+  const base = path.basename(file).replace(/\.[^.]+$/, "");
+  let slug = base
+    .normalize("NFKD")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "") || "photo";
+
+  // Two different files can sanitise to the same name ("a (1).jpg" and
+  // "a-1.jpg"). Disambiguate by content so one never overwrites the other.
+  if (takenSlugs.has(slug)) slug += "-" + hash.slice(0, 6);
+  takenSlugs.add(slug);
+
+  if (slug !== base) {
+    warnings.push(`${path.basename(file)} → img/${slug}-*  (renamed: a srcset URL cannot contain spaces)`);
+  }
+  return slug;
+}
+
+async function processPhoto(src, slug, hash) {
   const outDir = P("dist", "img");
 
   const cached = cache[slug];
@@ -323,10 +351,18 @@ function render(car, photos) {
 
 <style>${css}</style>
 <script>
-// Capture phase: the load event does not bubble, and an image served from
-// cache can finish before this file is even parsed — the DOMContentLoaded
-// sweep below catches those. Without both, a cached image stays invisible.
-addEventListener("load", function (e) {
+// document, NOT window. An img's load event does not bubble, so it has to be
+// caught in the capture phase — but window is not in the propagation path for
+// a resource load event, and a listener there never fires. (window DOES work
+// for resource *error* events, which is the trick this was confused with.)
+// Measured: with eleven images, window capture saw 0 and document capture
+// saw 11.
+//
+// The symptom when this is wrong is subtle, which is why it survived review:
+// the DOMContentLoaded sweep below still catches anything already cached, so
+// a reload looks perfect and only a cold first visit leaves images stuck on
+// their blurred placeholder.
+document.addEventListener("load", function (e) {
   var t = e.target;
   if (t && t.tagName === "IMG") { var f = t.closest(".ph"); if (f) f.setAttribute("data-loaded", ""); }
 }, true);
@@ -458,8 +494,17 @@ async function main() {
   console.log(`→ ${files.length} photos, ${WIDTHS.length} widths, 3 formats`);
   const t0 = Date.now();
 
+  // Slugs are assigned here, in sorted file order, rather than inside the
+  // pool — otherwise a collision suffix would attach to whichever file the
+  // scheduler happened to reach first and the output would differ run to run.
+  const ids = new Map();
+  for (const f of files) {
+    const hash = hashFile(P("photos", f));
+    ids.set(f, { hash, slug: slugFor(P("photos", f), hash) });
+  }
+
   const metas = await pool(files, Math.max(2, os.cpus().length), async (f) => {
-    const meta = await processPhoto(P("photos", f));
+    const meta = await processPhoto(P("photos", f), ids.get(f).slug, ids.get(f).hash);
     process.stdout.write(".");
     return { meta, alt: caps[f]?.alt ?? null };
   });
