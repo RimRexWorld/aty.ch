@@ -58,7 +58,10 @@ function val(value, label, fmt = (v) => v) {
 }
 
 const nf = new Intl.NumberFormat("en-AU");
-const money = (n) => "$" + nf.format(n);
+// A price is either a number to format as currency, or words the seller chose
+// — "On request", "Offers over 12,000". Running Intl.NumberFormat over the
+// second produces NaN, which is where the "$NaN" on the live page came from.
+const money = (v) => (typeof v === "number" ? "$" + nf.format(v) : String(v));
 const km = (n) => nf.format(n) + " km";
 
 function sh(cmd, args) {
@@ -218,31 +221,36 @@ function picture(meta, { alt, sizes, eager = false, className = "", index = null
 </figure>`;
 }
 
+/**
+ * The spec table. A row with no value is DROPPED, not rendered with a
+ * placeholder. "Recently replaced — missing" tells a buyer nothing and reads
+ * as neglect; the absent row reads as "nothing to report", which is both
+ * truthful and what a seller means by leaving it blank.
+ */
 function specRows(car) {
   const v = car.vehicle;
   const s = car.sale;
+  const list = (x) => (Array.isArray(x) ? (x.length ? x.join(", ") : null) : x);
+
   const rows = [
     ["Model", `${v.year} ${v.make} ${v.model}${v.variant ? " " + v.variant : ""}`],
-    ["Engine", [v.engine, need(v.engineSize, "vehicle.engineSize")].filter(Boolean).join(" ") || null],
-    ["Gearbox · Drive", v.transmission ? `${v.transmission} · ${v.drive}` : null, "vehicle.transmission"],
-    ["Odometer", v.odometerKm, "vehicle.odometerKm", km],
-    ["Seats", v.seats, "vehicle.seats"],
-    ["Colour", v.colour, "vehicle.colour"],
-    ["Registration", s.regoState && s.regoExpiry ? `${s.regoState}, valid until ${s.regoExpiry}` : null, "sale.regoState / sale.regoExpiry"],
-    ["Last service", s.lastServiceDate ? `${s.lastServiceDate}${s.lastServiceKm ? ` at ${km(s.lastServiceKm)}` : ""}` : null, "sale.lastServiceDate"],
-    ["Recently replaced", s.recentlyReplaced?.length ? s.recentlyReplaced.join(", ") : null, "sale.recentlyReplaced"],
-    ["Included", car.included?.length ? car.included.join(", ") : null, "included"],
-    ["Good to know", s.knownIssues, "sale.knownIssues"],
-    ["Available from", s.availableFrom ? `${s.availableFrom}${s.location ? ` in ${s.location}` : ""}` : null, "sale.availableFrom"],
+    ["Engine", [v.engine, v.engineSize].filter(Boolean).join(" ")],
+    ["Gearbox · Drive", v.transmission && `${v.transmission} · ${v.drive}`],
+    ["Odometer", v.odometerKm && km(v.odometerKm)],
+    ["Seats", v.seats],
+    ["Colour", v.colour],
+    ["Registration", s.regoState && s.regoExpiry && `${s.regoState}, valid until ${s.regoExpiry}`],
+    ["Last service", s.lastServiceDate && `${s.lastServiceDate}${s.lastServiceKm ? ` at ${km(s.lastServiceKm)}` : ""}`],
+    ["Service history", s.serviceHistory],
+    ["Recently replaced", list(s.recentlyReplaced)],
+    ["Included", list(car.included)],
+    ["Good to know", s.knownIssues],
+    ["Available from", s.availableFrom && `${s.availableFrom}${s.location ? ` in ${s.location}` : ""}`],
   ];
 
   return rows
-    .map(([label, value, key, fmt]) => {
-      const rendered = value === null || value === undefined
-        ? val(null, key || label.toLowerCase())
-        : esc(fmt ? fmt(value) : value);
-      return `      <tr><th scope="row">${esc(label)}</th><td>${rendered}</td></tr>`;
-    })
+    .filter(([, value]) => value !== null && value !== undefined && value !== "" && value !== false)
+    .map(([label, value]) => `      <tr><th scope="row">${esc(label)}</th><td>${esc(value)}</td></tr>`)
     .join("\n");
 }
 
@@ -323,7 +331,7 @@ function render(car, photos) {
   const noindex = incomplete ? `\n<meta name="robots" content="noindex, nofollow">` : "";
   const banner = incomplete
     ? `<p class="draft" role="status">Preview — this listing is not finished yet.
-  Price, odometer and contact details are still to come.</p>\n`
+  Some details are still to come.</p>\n`
     : "";
 
   return `<!doctype html>
@@ -409,7 +417,7 @@ ${rest.map((p, i) => picture(p.meta, { alt: p.alt || vehicleName, sizes: GALLERY
   <div class="prose">
       ${note}
   </div>
-  <p class="signoff">${val(car.note.author, "note.author")}</p>
+  ${car.note.author ? `<p class="signoff">${esc(car.note.author)}</p>` : ""}
 </section>
 
 <section class="details" id="details" aria-labelledby="details-h">
@@ -511,7 +519,10 @@ async function main() {
   process.stdout.write("\n");
 
   for (const [i, f] of files.entries()) {
-    if (!caps[f]?.alt) missing.push(`photos.json: alt text for ${f}`);
+    // A warning, not `missing`: alt text matters for a blind buyer and for
+    // search, but its absence does not make the LISTING unfinished, and it
+    // should not keep the preview banner on the page.
+    if (!caps[f]?.alt) warnings.push(`no alt text yet for ${f} — add it in content/photos.json`);
     void i;
   }
 
