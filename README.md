@@ -15,7 +15,7 @@ sind ~280 ms RTT: TCP + TLS + Request ergeben rund **840 ms bis zum ersten
 Byte**, bevor ein Pixel da ist, und derselbe RTT bremst danach den TCP-Slow-Start
 beim Laden der Fotos. Ein CDN mit Standort Sydney liegt bei ~60 ms.
 
-Die Blur-up-Technik unten kauft 200–400 ms wahrgenommene Ladezeit. Der
+Die Pixeltreppe unten kauft 200–400 ms wahrgenommene Ladezeit. Der
 Auslieferungsort kauft 3–5 Sekunden. Deshalb Pages.
 
 ---
@@ -118,41 +118,46 @@ Zwei Lehren für die echten Fotos:
 
 ## Wie die Bilder laden
 
-Pro Foto entstehen AVIF, WebP und JPEG in bis zu vier Breiten, plus ein 24 px
-breites WebP, das **als Data-URI direkt im HTML** steht.
+Pro Foto entstehen AVIF, WebP und JPEG in bis zu vier Breiten, plus **drei
+Platzhalter-Frames** (6, 12 und 24 px breit), die als Data-URI direkt im HTML
+stehen.
 
 Beim Laden passiert dann:
 
-1. Der `<figure>`-Wrapper trägt Seitenverhältnis, Dominantfarbe und das
-   Mini-Bild als Inline-Style. Das Layout steht also fest, bevor ein einziges
+1. Der `<figure>`-Wrapper trägt Seitenverhältnis, Dominantfarbe und alle drei
+   Frames als Inline-Style. Das Layout steht fest, bevor ein einziges
    Bild-Byte angefragt wurde — kein Umspringen, nie ein weisses Loch.
-2. CSS skaliert das 24-px-Bild hoch und legt `blur(18px)` darüber. Das ist der
-   verpixelte Vorschauzustand, kostet **null zusätzliche Requests** und für
-   alle Fotos zusammen rund 0,3 kB pro Bild.
+2. Eine CSS-Keyframe-Animation schaltet mit `step-end` von 6 px über 12 px auf
+   24 px. Dazu `image-rendering: pixelated`, damit es als härter werdendes
+   Raster liest und nicht als auflösende Unschärfe. Das kostet **null
+   zusätzliche Requests**: alle drei Frames zusammen sind ~0,5 kB pro Foto.
 3. Sobald das echte Bild dekodiert ist, setzt ein Listener `data-loaded` auf
-   den Wrapper und das scharfe Bild blendet in 0,45 s über die Unschärfe.
+   den Wrapper und das scharfe Bild blendet in 0,2 s darüber.
 
-Der Listener hängt in der **Capture-Phase an `document`**, nicht an `window`.
-`load` von `<img>` steigt nicht auf, muss also im Capture abgefangen werden —
-aber `window` liegt nicht im Ereignispfad eines Ressourcen-`load`, ein
-Listener dort feuert nie. (Für Ressourcen-**`error`** funktioniert `window`
-sehr wohl; genau damit war es verwechselt.) Gemessen bei elf Bildern:
-`window` sah 0 Events, `document` sah 11.
+Entscheidend ist die Reihenfolge: die Treppe läuft **während** des Downloads,
+nicht danach. Die verbreitete Canvas-Variante (Bild abwarten, dann auf einem
+`<canvas>` herunterskalieren und die Stufen zeigen) kann erst anfangen, wenn
+das Bild schon da ist — sie überbrückt also keine Wartezeit, sondern hängt
+Stufenzahl × Stufendauer an die Anzeige des scharfen Bildes an. Bei vier
+Stufen à 250 ms ist das eine ganze Sekunde Verzögerung auf jedem Foto.
 
-Zusätzlich läuft ein `DOMContentLoaded`-Sweep über alles, was schon
-`complete` ist — nötig für Bilder aus dem Cache, die fertig sein können, bevor
-das Script geparst ist. Ohne JS zeigt ein `<noscript>`-Block alles sofort
-scharf.
+Die Animation startet beim Laden der Seite und ist bewusst **nicht** an einen
+`IntersectionObserver` gekoppelt. Pausieren bis ein Foto in den Viewport
+kommt sähe für die unteren Bilder besser aus, macht den Effekt aber davon
+abhängig, dass ein Callback feuert — und wenn er ausbleibt, steht jeder
+Platzhalter dauerhaft auf der *gröbsten* Stufe statt auf der feinsten. So
+herum ist der Ausfallmodus der 24-px-Frame, also genau das, was die Seite vor
+diesem Effekt gezeigt hat.
 
-> Dieser Fehler war lange unsichtbar, weil der Sweep jeden Reload rettete.
-> Nur der kalte Erstbesuch blieb auf den unscharfen Platzhaltern stehen — also
-> genau der Fall, den die ganze Technik bedienen soll.
+Die Reihenfolge `crisp-edges` vor `pixelated` ist Absicht: die letzte
+Deklaration, die ein Browser versteht, gewinnt. Umgekehrt nahm Chromium
+`crisp-edges`.
 
 Was ein Besucher wirklich lädt:
 
 | | |
 |---|---|
-| HTML inkl. CSS und aller Mini-Bilder | 10 kB gzipped |
+| HTML inkl. CSS und aller Platzhalter | 11 kB gzipped |
 | Zwei Webfonts (Subset) | 48 kB |
 | Hero-Bild AVIF @800 | 21 kB |
 | **Above the fold** | **~79 kB** |

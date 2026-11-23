@@ -86,18 +86,46 @@ h1, h2 {
   background-color: var(--bg, var(--paper-sunk));
 }
 
+/* The staircase. Three placeholder frames (6, 12 and 24px wide) are inlined
+ * in the style attribute as --px1..--px3, so this runs with no request and no
+ * decode to wait for — it is already on screen while the real photo is still
+ * on the wire.
+ *
+ * `pixelated` is what makes it read as blocks sharpening rather than a blur
+ * resolving. No transform scale here: that was only needed to hide the soft
+ * edge a blur radius leaves behind. */
 .ph::before {
   content: "";
   position: absolute;
   inset: 0;
-  background-image: var(--lqip);
+  background-image: var(--px3);
   background-size: cover;
   background-position: center;
-  /* Scaled past the edges so the blur radius never reveals a soft border. */
-  transform: scale(1.15);
-  filter: blur(18px) saturate(1.15);
-  transition: opacity 0.45s ease 0.1s;
+  /* Order matters: the LAST declaration a browser understands wins. crisp-edges
+   * first as the older fallback, pixelated second so anything modern uses the
+   * nearest-neighbour rule we actually want. Reversed, Chromium took
+   * crisp-edges and the blocks were not guaranteed. */
+  image-rendering: crisp-edges;
+  image-rendering: pixelated;
+  transition: opacity 0.22s ease;
+  animation: px-steps var(--px-dur, 0.66s) step-end both;
 }
+
+/* step-end holds each frame until the next keyframe, so the change lands as a
+ * jump rather than a cross-fade — the jump IS the effect. */
+@keyframes px-steps {
+  0%   { background-image: var(--px1); }
+  34%  { background-image: var(--px2); }
+  68%  { background-image: var(--px3); }
+}
+
+/* Deliberately NOT gated on an IntersectionObserver. Pausing until a figure
+ * scrolls into view is prettier for photos below the fold, but it makes a
+ * decorative effect depend on a callback firing — and when that callback does
+ * not arrive, every placeholder is stuck on its COARSEST frame instead of its
+ * finest. Running on load is the worse animation and the far better failure:
+ * the end state is the 24px frame, which is exactly what the page showed
+ * before this effect existed. */
 
 .ph img {
   position: absolute;
@@ -106,7 +134,9 @@ h1, h2 {
   height: 100%;
   object-fit: cover;
   opacity: 0;
-  transition: opacity 0.45s ease;
+  /* Short on purpose. A long cross-fade smears the last step of the staircase
+   * into the sharp image and the rhythm is lost. */
+  transition: opacity 0.2s linear;
 }
 
 .ph[data-loaded] img { opacity: 1; }
@@ -114,6 +144,8 @@ h1, h2 {
 
 @media (prefers-reduced-motion: reduce) {
   .ph img, .ph::before { transition-duration: 1ms; }
+  /* No staircase: hold the finest frame and swap straight to the photo. */
+  .ph::before { animation: none; background-image: var(--px3); }
 }
 
 /* ------------------------------------------------------------------- hero */

@@ -32,7 +32,17 @@ const SERVE = process.argv.includes("--serve");
 // Widths the browser may pick from. Capped per-photo at the source width —
 // upscaling would cost bytes and deliver nothing.
 const WIDTHS = [400, 800, 1200, 1600];
-const LQIP_WIDTH = 24;
+// Placeholder frames, coarse to fine. Rendered at BUILD time and inlined as
+// data URIs rather than down-scaled on a canvas at runtime: that is what lets
+// the staircase be correct on the very first paint. A canvas version cannot
+// draw anything until the source has decoded, so it either shows a blank gap
+// or — the colleague's version — only runs once the FULL image has arrived,
+// which turns the effect into post-processing and delays the sharp image.
+const PIXEL_STEPS = [6, 12, 24];
+
+// Bumped when the shape of a cached meta object changes, so a stale .cache
+// from an older build is recomputed instead of silently missing fields.
+const META_V = 2;
 
 const missing = [];
 const warnings = [];
@@ -132,7 +142,7 @@ async function processPhoto(src, slug, hash) {
   const outDir = P("dist", "img");
 
   const cached = cache[slug];
-  if (cached?.hash === hash && cached.files.every((f) => fs.existsSync(path.join(outDir, f)))) {
+  if (cached?.hash === hash && cached.v === META_V && cached.files.every((f) => fs.existsSync(path.join(outDir, f)))) {
     return cached.meta;
   }
 
@@ -171,17 +181,20 @@ async function processPhoto(src, slug, hash) {
       files.push(jpg, webp, avif);
     }
 
-    // LQIP: a 24px-wide WebP, inlined as a data URI so it costs no request and
-    // is painted during the first HTML parse. CSS blurs and upscales it; the
-    // real image cross-fades over the top once decoded.
-    const lqipPng = path.join(tmp, "lqip.png");
-    const lqipWebp = path.join(tmp, "lqip.webp");
-    await execFileAsync("magick", [src + "[0]", "-auto-orient", "-resize", `${LQIP_WIDTH}x`, "-strip", lqipPng]);
-    await execFileAsync("cwebp", ["-quiet", "-q", "42", "-m", "6", lqipPng, "-o", lqipWebp]);
-    const lqip = "data:image/webp;base64," + fs.readFileSync(lqipWebp).toString("base64");
+    // Three placeholder frames inlined as data URIs, so the staircase costs
+    // no request at all and is on the page before any image byte is asked for.
+    // All three together are smaller than one HTTP round trip to Sydney.
+    const px = [];
+    for (const pw of PIXEL_STEPS) {
+      const flat = path.join(tmp, `px${pw}.png`);
+      const enc = path.join(tmp, `px${pw}.webp`);
+      await execFileAsync("magick", [src + "[0]", "-auto-orient", "-resize", `${pw}x`, "-strip", flat]);
+      await execFileAsync("cwebp", ["-quiet", "-q", "45", "-m", "6", flat, "-o", enc]);
+      px.push("data:image/webp;base64," + fs.readFileSync(enc).toString("base64"));
+    }
 
-    const meta = { slug, width: w, height: h, widths, lqip, dominant: "#" + dominant.slice(0, 6).toLowerCase() };
-    cache[slug] = { hash, files, meta };
+    const meta = { slug, width: w, height: h, widths, px, dominant: "#" + dominant.slice(0, 6).toLowerCase() };
+    cache[slug] = { hash, v: META_V, files, meta };
     return meta;
   } finally {
     fs.rmSync(tmp, { recursive: true, force: true });
@@ -208,7 +221,8 @@ function picture(meta, { alt, sizes, eager = false, className = "", index = null
   // Single quotes inside the url(): this lands in a double-quoted HTML
   // attribute, and a double quote here terminates it early and shreds the
   // whole <figure> tag. Base64 is [A-Za-z0-9+/=] only, so ' is always safe.
-  const style = `--ar:${(meta.width / meta.height).toFixed(4)};--bg:${meta.dominant};--lqip:url('${meta.lqip}')`;
+  const style = `--ar:${(meta.width / meta.height).toFixed(4)};--bg:${meta.dominant};` +
+    meta.px.map((u, i) => `--px${i + 1}:url('${u}')`).join(";");
   const loading = eager ? `loading="eager" fetchpriority="high"` : `loading="lazy"`;
   const idx = index === null ? "" : ` data-index="${index}"`;
   return `<figure class="ph ${className}" style="${style}"${idx}>
@@ -369,7 +383,7 @@ function render(car, photos) {
 // The symptom when this is wrong is subtle, which is why it survived review:
 // the DOMContentLoaded sweep below still catches anything already cached, so
 // a reload looks perfect and only a cold first visit leaves images stuck on
-// their blurred placeholder.
+// their placeholder.
 document.addEventListener("load", function (e) {
   var t = e.target;
   if (t && t.tagName === "IMG") { var f = t.closest(".ph"); if (f) f.setAttribute("data-loaded", ""); }
@@ -378,6 +392,7 @@ addEventListener("DOMContentLoaded", function () {
   document.querySelectorAll(".ph img").forEach(function (img) {
     if (img.complete && img.naturalWidth > 0) img.closest(".ph").setAttribute("data-loaded", "");
   });
+
 });
 </script>
 <noscript><style>.ph img{opacity:1}.ph::before{opacity:0}</style></noscript>
